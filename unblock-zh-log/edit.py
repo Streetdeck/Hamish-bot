@@ -82,9 +82,14 @@ for record in events:
         print(action, end='\t')
         target = record['title'][5:]
         print(target, end='\t')
-        pattern = re.compile(r'\d+')
-        link = record['comment']
-        id = pattern.findall(link)[1]
+        link_pattern = re.compile(r'unblock-zh/20\d{2}-.+/\d{6}')
+        id_pattern = re.compile(r'\d+')
+        comment = record['comment']
+        prefix = 'https://lists.wikimedia.org/mailman/private/'
+        mid = link_pattern.findall(comment)[0]
+        suffix = '.html'
+        link = prefix + mid + suffix
+        id = id_pattern.findall(link)[1]
         reason = '[' + link + ' {}]'.format(id)
         print(id, end='\t')
         append_text = append_text + '|-\n|{}\n|{}\n|{}\n|{}\n'.format(timestamp, action, target, reason)

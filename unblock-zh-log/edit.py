@@ -92,7 +92,11 @@ for record in events:
         id = id_pattern.findall(link)[1]
         reason = '[' + link + ' {}]'.format(id)
         print(id, end='\t')
-        append_text = append_text + '|-\n|{}\n|{}\n|{}\n|{}\n'.format(timestamp, action, target, reason)
+        new_log = '|-\n|{}\n|{}\n|{}\n|{}\n'.format(timestamp, action, target, reason)
+        if new_log in old_record_text:
+            continue
+        else:
+            append_text = append_text + new_log
         print()
     elif record['type'] == 'rights':
         if 'unblock-zh' == record['comment'][:10]:
@@ -116,11 +120,19 @@ for record in events:
                 id = id_pattern.findall(link)[1]
                 reason = '[' + link + ' {}]'.format(id)
                 print(id, end='\t')
-                append_text = append_text + '|-\n|{}\n|{}\n|{}\n|{}\n'.format(timestamp, action, target, reason)
+                new_log = '|-\n|{}\n|{}\n|{}\n|{}\n'.format(timestamp, action, target, reason)
+                if new_log in old_record_text:
+                    continue
+                else:
+                    append_text = append_text + new_log
             else:
                 reason = record['comment']
                 print(reason, end='\t')
-                append_text = append_text + '|-\n|{}\n|{}\n|{}\n|{}\n'.format(timestamp, action, target, reason)
+                new_log = '|-\n|{}\n|{}\n|{}\n|{}\n'.format(timestamp, action, target, reason)
+                if new_log in old_record_text:
+                    continue
+                else:
+                    append_text = append_text + new_log
             print()
 
 if new_time == original_time:

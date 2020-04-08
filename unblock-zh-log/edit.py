@@ -147,8 +147,8 @@ t4 = time.mktime(datetime.now().timetuple())
 strTime = '(Elasped %dms)' % ((t4 - t3) * 1000 + (t2 - t1) / 1000)
 summary = "Recording new action(s). " + strTime
 print(summary)
-pywikibot.showDiff(old_config_text, config_page.text)
-config_page.save(summary=summary, minor=False)
 pywikibot.showDiff(old_record_text, record_page.text)
 record_page.save(summary=summary, minor=False)
+pywikibot.showDiff(old_config_text, config_page.text)
+config_page.save(summary=summary, minor=False)
 

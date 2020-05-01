@@ -52,7 +52,9 @@ for task in config_data:
         summary = 'Update to '
         summary += '[https://github.com/{0}/{1}/commit/{2}'.format(github_uid, repo, new_sha) + ' ' + new_sha[:7] + ']'
         summary += ': ' + commit_info['commit']['message']
-        for file_path in commit_info['files']:
+        files = commit_info_url['files']
+        for file in files:
+            file_path = file['filename']
             print(file_path)
             base_page = pywikibot.Page(site, prefix + str(file_path))
             base_text = base_page.text

@@ -11,7 +11,7 @@ import urllib.request
 import json
 
 config_file = open('./siteconfig.json', 'w+', encoding='utf-8')
-config_data = json.loads(config_file)
+config_data = json.load(config_file)
 i = 0
 for task in config_data:
     if task['disabled']:

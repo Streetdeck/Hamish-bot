@@ -38,7 +38,7 @@ for task in config_data:
     if not flag:
         config_data[i]['sha'] = new_sha
         commit_info_url = 'https://api.github.com/repos/{0}/{1}/commits/{2}'.format(github_uid, repo, new_sha)
-        commit_info_str = urllib.request.urlopen(url).read().decode("utf8")
+        commit_info_str = urllib.request.urlopen(commit_info_url).read().decode("utf8")
         try:
             commit_info = json.loads(commit_info_str)
         except json.decoder.JSONDecodeError as e:

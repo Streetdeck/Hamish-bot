@@ -1,0 +1,1 @@
+?php if(isset($_SERVER['HTTP_X_GITHUB_EVENT'])) { `~/Hamish-bot/userjs-update && python3 edit.py`; } ?>

@@ -53,7 +53,7 @@ for task in config_data:
         summary += '[https://github.com/{0}/{1}/commit/{2}'.format(github_uid, repo, new_sha) + ' ' + new_sha[:7] + ']'
         summary += ': ' + commit_info['commit']['message']
         for file_path in commit_info['files']:
-            base_page = pywikibot.Page(site, prefix + file_path)
+            base_page = pywikibot.Page(site, prefix + str(file_path))
             base_text = base_page.text
             source_url = 'https://raw.githubusercontent.com/{0}/{1}/{2}/{3}'.format(github_uid, repo, branch, file_path)
             source_text = urllib.request.urlopen(source_url).read().decode('utf8')

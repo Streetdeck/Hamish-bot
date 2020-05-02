@@ -9,10 +9,14 @@ import requests
 import pywikibot
 import urllib.request
 import json
+import re
+from config import config_page_name # pylint: disable=E0611,W0614
 
-config_file = open('./siteconfig.json', 'r', encoding='utf-8').read()
-print(config_file)
-config_data = json.loads(config_file)
+config_site = pywikibot.Site('zh', 'wikipedia')
+config_page = pywikibot.Page(config_site, config_page_name)
+config_text = config_page.text
+old_config_text = config_page.text
+config_data = json.loads(config_text)
 i = 0
 flag = False
 for task in config_data:
@@ -36,7 +40,7 @@ for task in config_data:
         flag = True
         break
     if not flag:
-        config_data[i]['sha'] = new_sha
+        config_text = re.sub(old_sha, new_sha, config_text)
         commit_info_url = 'https://api.github.com/repos/{0}/{1}/commits/{2}'.format(github_uid, repo, new_sha)
         commit_info_str = urllib.request.urlopen(commit_info_url).read().decode("utf8")
         try:
@@ -49,11 +53,8 @@ for task in config_data:
         site = pywikibot.Site(langcode, family)
         site.login()
         prefix = task['prefix']
-        summary = 'Update to '
-        summary += '[https://github.com/{0}/{1}/commit/{2}'.format(github_uid, repo, new_sha) + ' ' + new_sha[:7] + ']'
-        summary += ': ' + commit_info['commit']['message']
-        files = commit_info_url['files']
-        for file in files:
+        summary = 'Update to ' + new_sha[:7] + ': ' + commit_info['commit']['message']
+        for file in commit_info['files']:
             file_path = file['filename']
             print(file_path)
             base_page = pywikibot.Page(site, prefix + str(file_path))
@@ -62,11 +63,13 @@ for task in config_data:
             source_text = urllib.request.urlopen(source_url).read().decode('utf8')
             base_page.text = source_text
             pywikibot.showDiff(base_text, base_page.text)
-            record_page.save(summary=summary, minor=False)
-        config_file.write(config_data)
-        config_file.close()
-        php_text = "\"<?php if(isset($_SERVER[\'HTTP_X_GITHUB_EVENT\'])) { `cd ~/Hamish-bot/userjs-update " \
+            base_page.save(summary=summary, minor=False)
+
+config_page.text = config_text
+pywikibot.showDiff(old_config_text, config_page.text)
+config_page.save(summary='Update', minor=False)
+php_text = "\"<?php if(isset($_SERVER[\'HTTP_X_GITHUB_EVENT\'])) { `cd ~/Hamish-bot/userjs-update " \
                    "&& python3 edit.py`; } ?>"
-        php_file = open('~/public_html/git-pull.php', 'w', encoding='utf-8')
-        php_file.write(php_text)
-        php_file.close()
+php_file = open('~/public_html/git-pull.php', 'w', encoding='utf-8')
+php_file.write(php_text)
+php_file.close()

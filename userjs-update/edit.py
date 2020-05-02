@@ -68,8 +68,3 @@ for task in config_data:
 config_page.text = config_text
 pywikibot.showDiff(old_config_text, config_page.text)
 config_page.save(summary='Update', minor=False)
-php_text = "\"<?php if(isset($_SERVER[\'HTTP_X_GITHUB_EVENT\'])) { `cd $HOME/Hamish-bot/userjs-update " \
-                   "&& python3 edit.py`; } ?>"
-php_file = open('$HOME/public_html/git-pull.php', 'w', encoding='utf-8')
-php_file.write(php_text)
-php_file.close()

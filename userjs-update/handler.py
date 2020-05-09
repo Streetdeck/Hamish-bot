@@ -11,8 +11,6 @@ import traceback
 
 from flask import Flask, request
 
-from main import System
-
 os.environ['TZ'] = 'UTC'
 
 app = Flask(__name__)

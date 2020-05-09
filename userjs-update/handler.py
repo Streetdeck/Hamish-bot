@@ -25,7 +25,6 @@ def index():
 
 @app.route('/webhook', methods=['POST'])
 def webhook():
-    system = System()
     try:
         update = subprocess.call("cd ~/Hamish-bot/userjs-update && python3 edit.py", shell=True)
         if update == 0:

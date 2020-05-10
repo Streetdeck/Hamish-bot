@@ -5,7 +5,6 @@
 # @File    : edit.py
 # @Software: PyCharm
 
-import requests
 import pywikibot
 import urllib.request
 import json

@@ -21,18 +21,21 @@ def index():
     return ''
 
 
-@app.route('/webhook', methods=['POST'])
+@app.route('/webhook', methods=['GET', 'POST'])
 def webhook():
-    try:
-        update = subprocess.call("cd ~/Hamish-bot/userjs-update && python3 edit.py", shell=True)
-        if update == 0:
-            return jsonify({'status': 'Success'}), 200
-        else:
-            return jsonify({'status': 'Error'}), 503
-    except Exception:
-        system.log(traceback.format_exc())
+    if request.method == 'GET':
+        return 'Successfully used GET'
+    else:
+        try:
+            update = subprocess.call("cd ~/Hamish-bot/userjs-update && python3 edit.py", shell=True)
+            if update == 0:
+                return jsonify({'status': 'Success'}), 200
+            else:
+                return jsonify({'status': 'Error'}), 503
+        except Exception:
+            system.log(traceback.format_exc())
 
-    return 'OK'
+        return 'OK'
 
 
 if __name__ == "__main__":

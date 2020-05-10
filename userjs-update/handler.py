@@ -5,11 +5,13 @@
 # @File    : handler.py
 # @Software: PyCharm
 
+from flask import Flask
+from flask import request, jsonify, abort
+import subprocess
 import json
 import os
 import traceback
 
-from flask import Flask, request
 
 os.environ['TZ'] = 'UTC'
 
@@ -29,9 +31,9 @@ def webhook():
         try:
             update = subprocess.call("cd ~/Hamish-bot/userjs-update && python3 edit.py", shell=True)
             if update == 0:
-                return jsonify({'status': 'Success'}), 200
+                print(jsonify({'status': 'Success'}), 200)
             else:
-                return jsonify({'status': 'Error'}), 503
+                print(jsonify({'status': 'Error'}), 503)
         except Exception:
             system.log(traceback.format_exc())
 

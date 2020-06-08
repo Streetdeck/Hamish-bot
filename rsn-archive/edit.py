@@ -45,16 +45,20 @@ for section in wikicode.get_sections()[1:]:
     print(lasttime, end="\t")
 
     processed = False
-    if re.search(cfg["processed_regex"], str(section)):
+    publicizing = False
+    if re.search(cfg["processed_regex"], str(section)) and not re.search(cfg["not_processed_regex"], str(section)):
         processed = True
         print("processed", end="\t")
+    elif re.search(cfg["publicizing_regex"], str(section)) and not re.search(cfg["not_processed_regex"], str(section)):
+        publicizing = True
+        print("publicizing", end="\t")
     else:
         print("not processed", end="\t")
 
     if (
         (
-            (processed and time.time() - lasttime.timestamp() > cfg["time_to_live_for_processed"])
-            or (not processed and time.time() - lasttime.timestamp() > cfg["time_to_live_for_not_processed"])
+            (processed and not publicizing and time.time() - lasttime.timestamp() > cfg["time_to_live_for_processed"])
+            or (not processed and not publicizing and time.time() - lasttime.timestamp() > cfg["time_to_live_for_not_processed"])
         )
             and lasttime != datetime(1, 1, 1)):
         target = (lasttime.year, lasttime.month)

@@ -38,38 +38,23 @@ for section in wikicode.get_sections()[1:]:
         title = str(section.get(0).title)
         print(title, end="\t")
 
-    processed = False
-    publicizing = False
-
-    for template in section.filter_templates():
-        if template.name.lower() == "status2":
-            if template.has(1):
-                status = template.get(1)
-            else:
-                status = "(empty)"
-            print("status", status, end="\t")
-            if status in cfg["publicizing_status"]:
-                publicizing = True
-                print("publicizing", end="\t")
-                break
-            elif status in cfg["done_status"]:
-                processed = True
-                print("processed", end="\t")
-                break
-            else:
-                print("not processed", end="\t")
-                break
-
     lasttime = datetime(1, 1, 1)
     for m in re.findall(r"(\d{4})年(\d{1,2})月(\d{1,2})日 \(.\) (\d{2}):(\d{2}) \(UTC\)", str(section)):
         d = datetime(int(m[0]), int(m[1]), int(m[2]), int(m[3]), int(m[4]))
         lasttime = max(lasttime, d)
     print(lasttime, end="\t")
 
+    processed = False
+    if re.search(cfg["processed_regex"], str(section)):
+        processed = True
+        print("processed", end="\t")
+    else:
+        print("not processed", end="\t")
+
     if (
         (
-            (processed and not publicizing and time.time() - lasttime.timestamp() > cfg["time_to_live_for_processed"])
-            or (not processed and not publicizing and time.time() - lasttime.timestamp() > cfg["time_to_live_for_not_processed"])
+            (processed and time.time() - lasttime.timestamp() > cfg["time_to_live_for_processed"])
+            or (not processed and time.time() - lasttime.timestamp() > cfg["time_to_live_for_not_processed"])
         )
             and lasttime != datetime(1, 1, 1)):
         target = (lasttime.year, lasttime.month)

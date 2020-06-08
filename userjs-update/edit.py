@@ -4,14 +4,12 @@
 # @Author  : Hamish Shing Shing Chau
 # @File    : edit.py
 # @Software: PyCharm
-import sys
-sys.path.append('/data/project/shared/pywikibot/stable')
-sys.path.append('/data/project/shared/pywikibot/stable/scripts')
-sys.path.append('/data/project/hamishbot/www/python/venv/lib/python3.7/site-packages')
+
 import pywikibot
 import urllib.request
 import json
 import re
+import sys
 from config import config_page_name # pylint: disable=E0611,W0614
 
 config_site = pywikibot.Site('zh', 'wikipedia')
@@ -35,7 +33,7 @@ for task in config_data:
         try:
             repo_info = json.loads(repo_info_str)
         except json.decoder.JSONDecodeError as e:
-            print(error('JSONDecodeError: {} content: {} url: {}'.format(e, repo_info_str, url)))
+            print('JSONDecodeError: {} content: {} url: {}'.format(e, repo_info_str, repo_info_url))
             sys.exit(1)
         new_sha = repo_info[0]['sha']
     if new_sha == old_sha:
@@ -48,7 +46,7 @@ for task in config_data:
         try:
             commit_info = json.loads(commit_info_str)
         except json.decoder.JSONDecodeError as e:
-            print(error('JSONDecodeError: {} content: {} url: {}'.format(e, commit_info_str, url)))
+            print('JSONDecodeError: {} content: {} url: {}'.format(e, commit_info_str, commit_info_url))
             sys.exit(1)
         langcode = task['langcode']
         family = task['family']
@@ -58,15 +56,17 @@ for task in config_data:
         summary = 'Update to ' + new_sha[:7] + ': ' + commit_info['commit']['message']
         for file in commit_info['files']:
             file_path = file['filename']
-            print(file_path)
-            base_page = pywikibot.Page(site, prefix + str(file_path))
-            base_text = base_page.text
-            source_url = 'https://raw.githubusercontent.com/{0}/{1}/{2}/{3}'.format(github_uid, repo, branch, file_path)
-            source_text = urllib.request.urlopen(source_url).read().decode('utf8')
-            base_page.text = source_text
-            pywikibot.showDiff(base_text, base_page.text)
-            base_page.save(summary=summary, minor=False)
-
+            if "modules" in file_path:
+                print(file_path)
+                base_page = pywikibot.Page(site, prefix + str(file_path))
+                base_text = base_page.text
+                source_url = 'https://raw.githubusercontent.com/{0}/{1}/{2}/{3}'.format(github_uid, repo, branch, file_path)
+                source_text = urllib.request.urlopen(source_url).read().decode('utf8')
+                base_page.text = source_text
+                pywikibot.showDiff(base_text, base_page.text)
+                base_page.save(summary=summary, minor=False)
+            else:
+                continue
 config_page.text = config_text
 pywikibot.showDiff(old_config_text, config_page.text)
 config_page.save(summary='Update', minor=False)

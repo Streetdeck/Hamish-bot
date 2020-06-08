@@ -10,6 +10,9 @@ import urllib.request
 import json
 import re
 import sys
+sys.path.append('/data/project/shared/pywikibot/stable')
+sys.path.append('/data/project/shared/pywikibot/stable/scripts')
+sys.path.append('/data/project/hamishbot/www/python/venv/lib/python3.7/site-packages')
 from config import config_page_name # pylint: disable=E0611,W0614
 
 config_site = pywikibot.Site('zh', 'wikipedia')

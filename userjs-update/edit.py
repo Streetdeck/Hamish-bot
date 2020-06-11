@@ -21,11 +21,12 @@ config_text = config_page.text
 old_config_text = config_page.text
 config_data = json.loads(config_text)
 i = 0
-flag = False
+
 for task in config_data:
+    flag = False
     if task['disabled']:
         flag = True
-        break
+        continue
     if not flag:
         repo = task['repo']
         branch = task['branch']
@@ -41,7 +42,7 @@ for task in config_data:
         new_sha = repo_info[0]['sha']
     if new_sha == old_sha:
         flag = True
-        break
+        continue
     if not flag:
         config_text = re.sub(old_sha, new_sha, config_text)
         commit_info_url = 'https://api.github.com/repos/{0}/{1}/commits/{2}'.format(github_uid, repo, new_sha)
